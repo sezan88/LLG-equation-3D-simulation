@@ -222,7 +222,9 @@ SCENARIOS = {
             "No effective magnetic field is present (H_eff = 0). The magnetization "
             "vector M remains statically fixed at its initial orientation (θ = 60°). "
             "This serves as the baseline equilibrium state before magnetic excitation."
-        )
+        ),
+        "colormap": "magma",
+        "colormap_range": (0.12, 0.98)
     },
     "precession": {
         "title": "Scenario 2: Precession Only (α = 0)",
@@ -232,7 +234,9 @@ SCENARIOS = {
             "Damping is set to zero (α = 0). The magnetic torque -γ(M × H_eff) acts "
             "perpendicular to both M and H_eff. This forces M into a continuous, "
             "conservative circular precession around H_eff without ever losing energy or aligning."
-        )
+        ),
+        "colormap": "cool",
+        "colormap_range": (0.0, 1.0)
     },
     "damping": {
         "title": "Scenario 3: Damping Only (Conceptual)",
@@ -242,7 +246,9 @@ SCENARIOS = {
             "Conceptual isolation of the Gilbert damping term without precession. The damping torque "
             "pulls M directly along a great-circle arc toward H_eff (+z axis). Note: This isolates "
             "one mathematical term for intuition—it is not a physically separate real-world state."
-        )
+        ),
+        "colormap": "magma",
+        "colormap_range": (0.12, 0.98)
     },
     "full": {
         "title": "Scenario 4: Full LLG (Precession + Damping)",
@@ -255,7 +261,9 @@ SCENARIOS = {
             "The full Landau-Lifshitz-Gilbert equation in action. The precession torque causes M to "
             "rotate around H_eff, while the Gilbert damping torque simultaneously pulls M inward. "
             "The result is a realistic spiral path decaying into alignment with H_eff along +z."
-        )
+        ),
+        "colormap": "magma",
+        "colormap_range": (0.12, 0.98)
     }
 }
 
@@ -540,11 +548,14 @@ class LLGExplainerApp:
         else:
             s_mid = np.array([0.0])
 
-        # Map midpoint arc-length parameter continuously to the colormap range
-        c_min, c_max = COLORMAP_RANGE
+        # Map midpoint arc-length parameter continuously to the scenario colormap range
+        sc_meta = SCENARIOS[scenario_key]
+        cmap_name = sc_meta.get("colormap", TRAJECTORY_COLORMAP)
+        c_min, c_max = sc_meta.get("colormap_range", COLORMAP_RANGE)
+        
         color_sample_vals = c_min + s_mid * (c_max - c_min)
 
-        cmap = plt.get_cmap(TRAJECTORY_COLORMAP)
+        cmap = plt.get_cmap(cmap_name)
         self.traj_colors = cmap(color_sample_vals)
 
         # Initial render & start animation frame loop
