@@ -30,7 +30,7 @@ The GUI features four switchable conceptual scenarios to isolate and build intui
 
 1. **`1. Before field applied` ($\mathbf{H}_{\text{eff}} = 0$)**:
    Demonstrates baseline static equilibrium. No effective field is present, so $d\mathbf{M}/dt = 0$ and $\mathbf{M}$ remains fixed at its initial tilted angle ($\theta = 60^\circ$).
-2. **`2. Precession only (α = 0)`**:
+2. **`2. Precession only` ($\alpha = 0$)**:
    Damping is set to zero ($\alpha = 0$). $\mathbf{M}$ executes a continuous, closed circular orbit around $\mathbf{H}_{\text{eff}}$ (+z axis) without decaying or losing magnetic energy.
 3. **`3. Damping only (conceptual)`**:
    Conceptually isolates the Gilbert damping torque by setting precession to zero. $\mathbf{M}$ relaxes directly along a great-circle meridian arc toward $\mathbf{H}_{\text{eff}}$ without spiraling. *(Note: This isolates one mathematical term for teaching intuition; it does not represent an independent physical real-world state).*

@@ -219,6 +219,7 @@ SCENARIOS = {
         "title_tk": "Scenario 1: Before Field Applied (H_eff = 0)",
         "button_text": "1. Before field applied",
         "formula": r"$\mathbf{H}_{\mathrm{eff}} = 0 \implies \frac{d\mathbf{M}}{dt} = 0$",
+        "formula_tk": "dM/dt = 0  (H_eff = 0)",
         "explanation": (
             "No effective magnetic field is present (H_eff = 0). The magnetization "
             "vector M remains statically fixed at its initial orientation (θ = 60°). "
@@ -232,6 +233,7 @@ SCENARIOS = {
         "title_tk": "Scenario 2: Precession Only (α = 0)",
         "button_text": "2. Precession only (α = 0)",
         "formula": r"$\frac{d\mathbf{M}}{dt} = -\gamma (\mathbf{M} \times \mathbf{H}_{\mathrm{eff}})$",
+        "formula_tk": "dM/dt = -γ (M × H_eff)",
         "explanation": (
             "Damping is set to zero (α = 0). The magnetic torque -γ(M × H_eff) acts "
             "perpendicular to both M and H_eff. This forces M into a continuous, "
@@ -245,6 +247,7 @@ SCENARIOS = {
         "title_tk": "Scenario 3: Damping Only (Conceptual)",
         "button_text": "3. Damping only (conceptual)",
         "formula": r"$\frac{d\mathbf{M}}{dt} = -\frac{\gamma \alpha}{M_s} \mathbf{M} \times (\mathbf{M} \times \mathbf{H}_{\mathrm{eff}})$",
+        "formula_tk": "dM/dt = -(γ α / Ms) [M × (M × H_eff)]",
         "explanation": (
             "Conceptual isolation of the Gilbert damping term without precession. The damping torque "
             "pulls M directly along a great-circle arc toward H_eff (+z axis). Note: This isolates "
@@ -261,6 +264,7 @@ SCENARIOS = {
             r"$\frac{d\mathbf{M}}{dt} = -\frac{\gamma}{1+\alpha^2}(\mathbf{M}\times\mathbf{H}_{\mathrm{eff}}) "
             r"- \frac{\gamma\alpha}{(1+\alpha^2)M_s}\mathbf{M}\times(\mathbf{M}\times\mathbf{H}_{\mathrm{eff}})$"
         ),
+        "formula_tk": "dM/dt = -[γ / (1+α²)] (M × H_eff) - [γ α / ((1+α²) Ms)] [M × (M × H_eff)]",
         "explanation": (
             "The full Landau-Lifshitz-Gilbert equation in action. The precession torque causes M to "
             "rotate around H_eff, while the Gilbert damping torque simultaneously pulls M inward. "
