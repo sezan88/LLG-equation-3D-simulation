@@ -240,7 +240,7 @@ SCENARIOS = {
             "conservative circular precession around H_eff without ever losing energy or aligning."
         ),
         "colormap": "cool",
-        "colormap_range": (0.0, 1.0)
+        "colormap_range": (0.15, 1.0)
     },
     "damping": {
         "title": r"Scenario 3: Damping Only (Conceptual)",
@@ -253,8 +253,8 @@ SCENARIOS = {
             "pulls M directly along a great-circle arc toward H_eff (+z axis). Note: This isolates "
             "one mathematical term for intuition—it is not a physically separate real-world state."
         ),
-        "colormap": "magma",
-        "colormap_range": (0.12, 0.98)
+        "colormap": "plasma",
+        "colormap_range": (0.32, 0.98)
     },
     "full": {
         "title": r"Scenario 4: Full LLG (Precession + Damping)",
