@@ -215,7 +215,8 @@ def compute_trajectory(scenario_key, alpha=ALPHA_DEFAULT, num_frames=NUM_ANIM_FR
 # =============================================================================
 SCENARIOS = {
     "before": {
-        "title": "Scenario 1: Before Field Applied (H_eff = 0)",
+        "title": r"Scenario 1: Before Field Applied ($\mathbf{H}_{\mathrm{eff}} = 0$)",
+        "title_tk": "Scenario 1: Before Field Applied (H_eff = 0)",
         "button_text": "1. Before field applied",
         "formula": r"$\mathbf{H}_{\mathrm{eff}} = 0 \implies \frac{d\mathbf{M}}{dt} = 0$",
         "explanation": (
@@ -227,7 +228,8 @@ SCENARIOS = {
         "colormap_range": (0.12, 0.98)
     },
     "precession": {
-        "title": "Scenario 2: Precession Only (α = 0)",
+        "title": r"Scenario 2: Precession Only ($\alpha = 0$)",
+        "title_tk": "Scenario 2: Precession Only (α = 0)",
         "button_text": "2. Precession only (α = 0)",
         "formula": r"$\frac{d\mathbf{M}}{dt} = -\gamma (\mathbf{M} \times \mathbf{H}_{\mathrm{eff}})$",
         "explanation": (
@@ -239,7 +241,8 @@ SCENARIOS = {
         "colormap_range": (0.0, 1.0)
     },
     "damping": {
-        "title": "Scenario 3: Damping Only (Conceptual)",
+        "title": r"Scenario 3: Damping Only (Conceptual)",
+        "title_tk": "Scenario 3: Damping Only (Conceptual)",
         "button_text": "3. Damping only (conceptual)",
         "formula": r"$\frac{d\mathbf{M}}{dt} = -\frac{\gamma \alpha}{M_s} \mathbf{M} \times (\mathbf{M} \times \mathbf{H}_{\mathrm{eff}})$",
         "explanation": (
@@ -251,7 +254,8 @@ SCENARIOS = {
         "colormap_range": (0.12, 0.98)
     },
     "full": {
-        "title": "Scenario 4: Full LLG (Precession + Damping)",
+        "title": r"Scenario 4: Full LLG (Precession + Damping)",
+        "title_tk": "Scenario 4: Full LLG (Precession + Damping)",
         "button_text": "4. Full LLG (precession + damping)",
         "formula": (
             r"$\frac{d\mathbf{M}}{dt} = -\frac{\gamma}{1+\alpha^2}(\mathbf{M}\times\mathbf{H}_{\mathrm{eff}}) "
@@ -524,7 +528,7 @@ class LLGExplainerApp:
 
         # Update explanation panel text
         sc = SCENARIOS[scenario_key]
-        self.lbl_sc_title.config(text=sc["title"])
+        self.lbl_sc_title.config(text=sc.get("title_tk", sc["title"]))
         self.lbl_exp_text.config(text=sc["explanation"])
 
         # Compute numerical ODE trajectory
@@ -614,6 +618,15 @@ class LLGExplainerApp:
                 r"$\mathbf{H}_{\mathrm{eff}}$",
                 color="#00E676",
                 fontsize=13,
+                fontweight="bold"
+            )
+        else:
+            # For scenario 1 ('before'), display clear 3D LaTeX text annotation indicating H_eff = 0
+            self.ax.text(
+                0.05, 0.05, 1.55,
+                r"$\mathbf{H}_{\mathrm{eff}} = 0$",
+                color="#8B949E",
+                fontsize=12,
                 fontweight="bold"
             )
 
