@@ -15,7 +15,7 @@ Where:
 - $\gamma$ is the gyromagnetic ratio.
 - $\alpha$ is the dimensionless Gilbert damping constant.
 - $-\gamma (\mathbf{M} \times \mathbf{H}_{\text{eff}})$ represents the conservative **precession torque**, forcing $\mathbf{M}$ to precess around $\mathbf{H}_{\text{eff}}$ at constant energy.
-- $\frac{\alpha}{M_s} \left(\mathbf{M} \times \frac{d\mathbf{M}}{dt}\right)$ represents the phenomenological **Gilbert damping torque**, dissipating energy and relaxing $\mathbf{M}$ toward alignment with $\mathbf{H}_{\text{eff}}$.
+- $\frac{\alpha}{M_s} (\mathbf{M} \times \frac{d\mathbf{M}}{dt})$ represents the phenomenological **Gilbert damping torque**, dissipating energy and relaxing $\mathbf{M}$ toward alignment with $\mathbf{H}_{\text{eff}}$.
 
 ### 2. Explicit Landau-Lifshitz Form (Used for Integration)
 By taking the cross product with $\mathbf{M}$ on both sides of the implicit Gilbert equation, we obtain the explicit form suitable for numerical integration:
