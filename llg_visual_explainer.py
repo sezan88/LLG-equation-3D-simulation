@@ -305,11 +305,12 @@ class LLGExplainerApp:
 
         self.root.configure(bg=self.bg_dark)
 
-        # Animation state attributes
+        # Animation & View state attributes
         self.current_scenario_key = "before"
         self.current_frame = 0
         self.animation_job = None
         self.is_animating = False
+        self.current_zoom_limit = 1.3  # Dynamic 3D view zoom boundary limit
 
         self.t_eval = None
         self.M_traj = None
@@ -451,8 +452,55 @@ class LLGExplainerApp:
         )
         self.btn_pause.pack(side="right", expand=True, fill="x", padx=(4, 0))
 
+        # 3D View Zoom Controls (Zoom In / Zoom Out / Reset View)
+        zoom_frame = tk.Frame(btn_card, bg=self.bg_card)
+        zoom_frame.pack(fill="x", pady=(8, 0))
+
+        self.btn_zoom_in = tk.Button(
+            zoom_frame,
+            text="🔍+ Zoom In",
+            font=("Segoe UI", 9, "bold"),
+            bg="#374151",
+            fg="#FFFFFF",
+            bd=0,
+            padx=6,
+            pady=5,
+            cursor="hand2",
+            command=self.zoom_in
+        )
+        self.btn_zoom_in.pack(side="left", expand=True, fill="x", padx=(0, 2))
+
+        self.btn_zoom_out = tk.Button(
+            zoom_frame,
+            text="🔍- Zoom Out",
+            font=("Segoe UI", 9, "bold"),
+            bg="#374151",
+            fg="#FFFFFF",
+            bd=0,
+            padx=6,
+            pady=5,
+            cursor="hand2",
+            command=self.zoom_out
+        )
+        self.btn_zoom_out.pack(side="left", expand=True, fill="x", padx=2)
+
+        self.btn_zoom_reset = tk.Button(
+            zoom_frame,
+            text="🎯 Reset View",
+            font=("Segoe UI", 9, "bold"),
+            bg="#2D333B",
+            fg=self.fg_text,
+            bd=0,
+            padx=6,
+            pady=5,
+            cursor="hand2",
+            command=self.reset_view
+        )
+        self.btn_zoom_reset.pack(side="right", expand=True, fill="x", padx=(2, 0))
+
         # Scenario Explanation Card
         self.exp_card = ttk.Frame(left_panel, style="Card.TFrame", padding=15)
+        self.exp_card.pack(fill="both", expand=True)
         self.exp_card.pack(fill="both", expand=True)
 
         self.lbl_card_title = ttk.Label(
@@ -514,6 +562,9 @@ class LLGExplainerApp:
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=right_panel)
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
+
+        # Connect mouse scroll wheel listener for interactive 3D zooming
+        self.canvas.mpl_connect("scroll_event", self._on_scroll)
 
     def select_scenario(self, scenario_key):
         """Switch active scenario, stop existing animation, and start new one."""
@@ -654,7 +705,7 @@ class LLGExplainerApp:
         )
 
         # 4. Axes limits, labels, camera orientation & clean styling
-        limit = 1.3
+        limit = self.current_zoom_limit
         self.ax.set_xlim([-limit, limit])
         self.ax.set_ylim([-limit, limit])
         self.ax.set_zlim([-limit, limit])
@@ -829,6 +880,38 @@ class LLGExplainerApp:
                 self.is_animating = True
                 self.btn_pause.config(text="⏸ Pause", bg="#374151")
                 self._animate_step()
+
+    def zoom_in(self, step=0.15):
+        """Zoom into the 3D plot scene."""
+        self.current_zoom_limit = max(0.4, self.current_zoom_limit - step)
+        self._apply_zoom_limits()
+
+    def zoom_out(self, step=0.15):
+        """Zoom out of the 3D plot scene."""
+        self.current_zoom_limit = min(3.5, self.current_zoom_limit + step)
+        self._apply_zoom_limits()
+
+    def reset_view(self):
+        """Reset camera zoom and orientation angles to defaults."""
+        self.current_zoom_limit = 1.3
+        self.ax.view_init(elev=DEFAULT_ELEV, azim=DEFAULT_AZIM)
+        self._apply_zoom_limits()
+
+    def _apply_zoom_limits(self):
+        """Enforce current zoom limit bounds on 3D plot axes."""
+        lim = self.current_zoom_limit
+        self.ax.set_xlim([-lim, lim])
+        self.ax.set_ylim([-lim, lim])
+        self.ax.set_zlim([-lim, lim])
+        self.canvas.draw_idle()
+
+    def _on_scroll(self, event):
+        """Handle mouse scroll wheel events for dynamic interactive 3D zooming."""
+        if event.inaxes == self.ax:
+            if event.button == "up":
+                self.zoom_in(step=0.10)
+            elif event.button == "down":
+                self.zoom_out(step=0.10)
 
 
 # =============================================================================

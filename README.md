@@ -82,6 +82,9 @@ python llg_visual_explainer.py
 - Click any of the **four scenario buttons** in the left panel to instantly launch that scenario's animated 3D trajectory.
 - Use **🔄 Replay Animation** to restart the animation from $t=0$.
 - Use **⏸ Pause / Resume** to freeze or continue the motion.
+- **Interactive 3D Zooming**:
+  - **Mouse Scroll Wheel**: Scroll UP / DOWN over the 3D plot canvas to dynamically zoom in and out.
+  - **UI Zoom Buttons**: Click **🔍+ Zoom In**, **🔍- Zoom Out**, or **🎯 Reset View** in the left control panel.
 - Left-click and drag on the 3D plot canvas to interactively rotate the camera perspective angle in real time!
 
 ---
