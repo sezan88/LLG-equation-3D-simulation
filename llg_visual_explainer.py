@@ -270,8 +270,8 @@ SCENARIOS = {
             "rotate around H_eff, while the Gilbert damping torque simultaneously pulls M inward. "
             "The result is a realistic spiral path decaying into alignment with H_eff along +z."
         ),
-        "colormap": "magma",
-        "colormap_range": (0.12, 0.98)
+        "colormap": "plasma",
+        "colormap_range": (0.32, 0.98)
     }
 }
 
