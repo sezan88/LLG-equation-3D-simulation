@@ -91,4 +91,4 @@ python llg_visual_explainer.py
 
 ## Demonstration Preview
 
-*(A demo GIF or screenshot preview can be added here)*
+![LLG Visual Explainer Snapshot](snapshot.png)
