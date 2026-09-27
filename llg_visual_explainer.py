@@ -310,7 +310,7 @@ class LLGExplainerApp:
         self.current_frame = 0
         self.animation_job = None
         self.is_animating = False
-        self.current_zoom_limit = 1.3  # Dynamic 3D view zoom boundary limit
+        self.camera_dist = 10.0  # 3D viewport camera lens viewing distance (default 10)
 
         self.t_eval = None
         self.M_traj = None
@@ -347,7 +347,7 @@ class LLGExplainerApp:
             "CardTitle.TLabel",
             background=self.bg_card,
             foreground=self.accent_blue,
-            font=("Segoe UI", 12, "bold")
+            font=("Segoe UI", 13, "bold")
         )
         style.configure(
             "Formula.TLabel",
@@ -360,7 +360,7 @@ class LLGExplainerApp:
             background=self.bg_card,
             foreground=self.fg_text,
             font=("Segoe UI", 10),
-            wraplength=480
+            wraplength=520
         )
 
     def _build_gui_layout(self):
@@ -385,8 +385,8 @@ class LLGExplainerApp:
         main_container = ttk.Frame(self.root, padding=(20, 10, 20, 20))
         main_container.pack(fill="both", expand=True, side="top")
 
-        # Left Control & Explanation Panel
-        left_panel = ttk.Frame(main_container, width=420)
+        # Left Control & Explanation Panel (Proportionally widened to fit larger fonts)
+        left_panel = ttk.Frame(main_container, width=480)
         left_panel.pack(side="left", fill="y", padx=(0, 15))
         left_panel.pack_propagate(False)
 
@@ -405,14 +405,14 @@ class LLGExplainerApp:
             btn = tk.Button(
                 btn_card,
                 text=sc["button_text"],
-                font=("Segoe UI", 10, "bold"),
+                font=("Segoe UI", 11, "bold"),
                 bg="#2D333B",
                 fg=self.fg_text,
                 activebackground=self.accent_blue,
                 activeforeground="#FFFFFF",
                 bd=0,
-                padx=12,
-                pady=10,
+                padx=14,
+                pady=11,
                 anchor="w",
                 cursor="hand2",
                 command=lambda k=key: self.select_scenario(k)
@@ -427,12 +427,12 @@ class LLGExplainerApp:
         self.btn_replay = tk.Button(
             ctrl_frame,
             text="🔄 Replay Animation",
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg=self.accent_blue,
             fg="#FFFFFF",
             bd=0,
-            padx=10,
-            pady=6,
+            padx=12,
+            pady=8,
             cursor="hand2",
             command=self.replay_animation
         )
@@ -441,115 +441,36 @@ class LLGExplainerApp:
         self.btn_pause = tk.Button(
             ctrl_frame,
             text="⏸ Pause / Resume",
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg="#374151",
             fg="#FFFFFF",
             bd=0,
-            padx=10,
-            pady=6,
+            padx=12,
+            pady=8,
             cursor="hand2",
             command=self.toggle_pause
         )
         self.btn_pause.pack(side="right", expand=True, fill="x", padx=(4, 0))
 
-        # 3D View Zoom Controls (Zoom In / Zoom Out / Reset View)
+        # 3D View Zoom Controls (Reset View)
         zoom_frame = tk.Frame(btn_card, bg=self.bg_card)
         zoom_frame.pack(fill="x", pady=(8, 0))
-
-        self.btn_zoom_in = tk.Button(
-            zoom_frame,
-            text="🔍+ Zoom In",
-            font=("Segoe UI", 9, "bold"),
-            bg="#374151",
-            fg="#FFFFFF",
-            bd=0,
-            padx=6,
-            pady=5,
-            cursor="hand2",
-            command=self.zoom_in
-        )
-        self.btn_zoom_in.pack(side="left", expand=True, fill="x", padx=(0, 2))
-
-        self.btn_zoom_out = tk.Button(
-            zoom_frame,
-            text="🔍- Zoom Out",
-            font=("Segoe UI", 9, "bold"),
-            bg="#374151",
-            fg="#FFFFFF",
-            bd=0,
-            padx=6,
-            pady=5,
-            cursor="hand2",
-            command=self.zoom_out
-        )
-        self.btn_zoom_out.pack(side="left", expand=True, fill="x", padx=2)
 
         self.btn_zoom_reset = tk.Button(
             zoom_frame,
             text="🎯 Reset View",
-            font=("Segoe UI", 9, "bold"),
+            font=("Segoe UI", 10, "bold"),
             bg="#2D333B",
             fg=self.fg_text,
             bd=0,
-            padx=6,
-            pady=5,
+            padx=10,
+            pady=7,
             cursor="hand2",
             command=self.reset_view
         )
-        self.btn_zoom_reset.pack(side="right", expand=True, fill="x", padx=(2, 0))
+        self.btn_zoom_reset.pack(fill="x", expand=True)
 
-        # Scenario Explanation Card
-        self.exp_card = ttk.Frame(left_panel, style="Card.TFrame", padding=15)
-        self.exp_card.pack(fill="both", expand=True)
-        self.exp_card.pack(fill="both", expand=True)
 
-        self.lbl_card_title = ttk.Label(
-            self.exp_card,
-            text="SCENARIO EXPLANATION",
-            style="CardTitle.TLabel"
-        )
-        self.lbl_card_title.pack(anchor="w", pady=(0, 8))
-
-        self.lbl_sc_title = ttk.Label(
-            self.exp_card,
-            text="",
-            font=("Segoe UI", 11, "bold"),
-            background=self.bg_card,
-            foreground="#58A6FF"
-        )
-        self.lbl_sc_title.pack(anchor="w", pady=(0, 6))
-
-        # Text Explanation Widget with smooth auto-wrap
-        self.lbl_exp_text = ttk.Label(
-            self.exp_card,
-            text="",
-            style="Explanation.TLabel"
-        )
-        self.lbl_exp_text.pack(anchor="w", fill="x", expand=True, pady=(0, 10))
-
-        # Legend & Color Coding Reference Card
-        legend_frame = tk.Frame(self.exp_card, bg="#1C2128", bd=1, relief="solid")
-        legend_frame.pack(fill="x", side="bottom", pady=(10, 0), ipady=6, ipadx=8)
-
-        tk.Label(
-            legend_frame,
-            text="3D VISUAL LEGEND:",
-            font=("Segoe UI", 8, "bold"),
-            bg="#1C2128",
-            fg=self.fg_muted
-        ).pack(anchor="w", padx=6, pady=(4, 2))
-
-        items = [
-            ("🟢 Solid Green Arrow", "Effective Magnetic Field H_eff (+z)"),
-            ("🟠 Glowing Orange Vector", "Live Magnetization Vector M(t)"),
-            ("🔥 Magma Arc Gradient", "Continuous arc-length trajectory (t=0 to t_final)"),
-            ("🟢 Green Point / 🔴 Red Point", "Initial Position (t=0) / Final Position")
-        ]
-        for symbol, desc in items:
-            row = tk.Frame(legend_frame, bg="#1C2128")
-            row.pack(fill="x", padx=6, pady=1)
-            tk.Label(row, text=symbol, font=("Segoe UI", 8, "bold"), bg="#1C2128", fg="#E6EDF3").pack(side="left")
-            tk.Label(row, text=f" : {desc}", font=("Segoe UI", 8), bg="#1C2128", fg=self.fg_muted).pack(side="left")
 
         # Right Panel - Matplotlib 3D Figure Container
         right_panel = ttk.Frame(main_container)
@@ -581,10 +502,6 @@ class LLGExplainerApp:
             else:
                 btn.config(bg="#2D333B", fg=self.fg_text)
 
-        # Update explanation panel text
-        sc = SCENARIOS[scenario_key]
-        self.lbl_sc_title.config(text=sc.get("title_tk", sc["title"]))
-        self.lbl_exp_text.config(text=sc["explanation"])
 
         # Compute numerical ODE trajectory
         self.t_eval, self.M_traj = compute_trajectory(scenario_key)
@@ -705,7 +622,7 @@ class LLGExplainerApp:
         )
 
         # 4. Axes limits, labels, camera orientation & clean styling
-        limit = self.current_zoom_limit
+        limit = 1.3
         self.ax.set_xlim([-limit, limit])
         self.ax.set_ylim([-limit, limit])
         self.ax.set_zlim([-limit, limit])
@@ -714,8 +631,9 @@ class LLGExplainerApp:
         self.ax.set_ylabel("Y", color=self.fg_muted, fontsize=10, labelpad=5)
         self.ax.set_zlabel("Z", color=self.fg_muted, fontsize=10, labelpad=5)
 
-        # Set optimal default camera perspective angle
+        # Set camera perspective angle and camera viewport viewing distance
         self.ax.view_init(elev=DEFAULT_ELEV, azim=DEFAULT_AZIM)
+        self.ax.dist = self.camera_dist
 
         # Custom grid line styling
         self.ax.xaxis.pane.fill = False
@@ -824,19 +742,20 @@ class LLGExplainerApp:
             zorder=15
         )
 
-        # 4. Red Final Position Marker upon completion
+        # 4. Vibrant Cyan-Blue Final Position Marker upon completion (eye-catching in dark mode)
         if idx == N - 1 and self.current_scenario_key != "before":
             if self.final_marker is not None:
                 try:
                     self.final_marker.remove()
                 except Exception:
                     pass
+            final_color = "#00E5FF"  # High-contrast Electric Cyan Blue
             self.final_marker = self.ax.scatter(
                 [Mx], [My], [Mz],
-                color="#E91E63",
-                s=110,
+                color=final_color,
+                s=130,
                 marker="*",
-                edgecolors="white",
+                edgecolors="#FFFFFF",
                 linewidth=1.5,
                 depthshade=False,
                 zorder=16
@@ -844,8 +763,8 @@ class LLGExplainerApp:
             self.ax.text(
                 Mx * 1.15, My * 1.15, Mz * 1.15,
                 r"$\mathbf{M}_{\mathrm{final}}$",
-                color="#E91E63",
-                fontsize=11,
+                color=final_color,
+                fontsize=12,
                 fontweight="bold"
             )
 
@@ -881,37 +800,32 @@ class LLGExplainerApp:
                 self.btn_pause.config(text="⏸ Pause", bg="#374151")
                 self._animate_step()
 
-    def zoom_in(self, step=0.15):
-        """Zoom into the 3D plot scene."""
-        self.current_zoom_limit = max(0.4, self.current_zoom_limit - step)
-        self._apply_zoom_limits()
+    def zoom_in(self, step=1.0):
+        """Zoom in the 3D viewport camera lens (webpage-style camera zoom in)."""
+        self.camera_dist = max(3.5, self.camera_dist - step)
+        self.ax.dist = self.camera_dist
+        self.canvas.draw_idle()
 
-    def zoom_out(self, step=0.15):
-        """Zoom out of the 3D plot scene."""
-        self.current_zoom_limit = min(3.5, self.current_zoom_limit + step)
-        self._apply_zoom_limits()
+    def zoom_out(self, step=1.0):
+        """Zoom out the 3D viewport camera lens (webpage-style camera zoom out)."""
+        self.camera_dist = min(25.0, self.camera_dist + step)
+        self.ax.dist = self.camera_dist
+        self.canvas.draw_idle()
 
     def reset_view(self):
-        """Reset camera zoom and orientation angles to defaults."""
-        self.current_zoom_limit = 1.3
+        """Reset camera lens zoom distance and view orientation angles to defaults."""
+        self.camera_dist = 10.0
+        self.ax.dist = 10.0
         self.ax.view_init(elev=DEFAULT_ELEV, azim=DEFAULT_AZIM)
-        self._apply_zoom_limits()
-
-    def _apply_zoom_limits(self):
-        """Enforce current zoom limit bounds on 3D plot axes."""
-        lim = self.current_zoom_limit
-        self.ax.set_xlim([-lim, lim])
-        self.ax.set_ylim([-lim, lim])
-        self.ax.set_zlim([-lim, lim])
         self.canvas.draw_idle()
 
     def _on_scroll(self, event):
-        """Handle mouse scroll wheel events for dynamic interactive 3D zooming."""
+        """Handle mouse scroll wheel events for webpage-style camera lens zooming."""
         if event.inaxes == self.ax:
             if event.button == "up":
-                self.zoom_in(step=0.10)
+                self.zoom_in(step=0.8)
             elif event.button == "down":
-                self.zoom_out(step=0.10)
+                self.zoom_out(step=0.8)
 
 
 # =============================================================================
@@ -924,8 +838,8 @@ def main():
 
     # Center window on desktop screen
     root.update_idletasks()
-    width = 1280
-    height = 860
+    width = 1380
+    height = 880
     x = (root.winfo_screenwidth() // 2) - (width // 2)
     y = (root.winfo_screenheight() // 2) - (height // 2)
     root.geometry(f"{width}x{height}+{max(0, x)}+{max(0, y)}")
